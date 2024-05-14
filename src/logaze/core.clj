@@ -74,6 +74,13 @@
 ;;  :access-control-allow-methods [:get]))
 
 (comment
+(ns logaze.core
+  (:require [logaze.openapi :as o]
+            [logaze.transform :as t]
+            [logaze.storage :as s]
+            [clojure.set :refer [difference]]
+            [clojure.core.async :as a]
+            [ring.middleware.cors :refer [wrap-cors]]))
   (def page-1 (o/extract-page-products 1))
 
   (def product-0-page-1 (first page-1))
