@@ -8,6 +8,7 @@
 (defn clean [product]
   (select-keys product
                [:battery
+                :jonahTmp
                 :brand
                 :camera
                 :display
