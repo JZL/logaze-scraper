@@ -47,20 +47,31 @@
 
     (->> (persistent! (a/<!! (a/reduce conj! (transient []) products-enriched>))))))
 
-(defn scrape-handler [request]
-  (println {:request-uri (:uri request)})
-  (when (= "/" (:uri request))
-    (a/thread (s/post (do-scraping))))
-  {:status 200
-   :headers {"Content-Type" "text/plain"}
-   :body "Done!"})
 
-(def handler
-(wrap-cors
- scrape-handler
- :access-control-allow-origin [#"http://localhost:?\d*/?"
-                               #"https://ackerleytng.github.io/?"]
- :access-control-allow-methods [:get]))
+(defn -main [& args]
+  (let [
+        just-test (System/getenv "JUSTTEST")
+        ]
+    (if (not= just-test "1")
+      (s/post (do-scraping))
+      (do-scraping)
+      )
+    )
+  )
+
+;; (defn scrape-handler [request]
+;;   (println {:request-uri (:uri request)})
+;;   (when (= "/" (:uri request))
+;;     (a/thread (s/post (do-scraping))))
+;;   {:status 200
+;;    :headers {"Content-Type" "text/plain"}
+;;    :body "Done!"})
+;; (def handler
+;; (wrap-cors
+;;  scrape-handler
+;;  :access-control-allow-origin [#"http://localhost:?\d*/?"
+;;                                #"https://ackerleytng.github.io/?"]
+;;  :access-control-allow-methods [:get]))
 
 (comment
   (def page-1 (o/extract-page-products 1))
