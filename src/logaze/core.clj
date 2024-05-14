@@ -31,14 +31,19 @@
                 seen #{}]
       (let [raw-data (o/extract-page-products n)
             new-product-codes (difference (set (map :product-code raw-data)) seen)
-            data (filter (fn [d] (new-product-codes (:product-code d))) raw-data)]
+            data (filter (fn [d] (new-product-codes (:product-code d))) raw-data)
+            just-test (System/getenv "JUSTTEST")
+            ]
 
         (a/onto-chan!! products-raw> data false)
         (swap! remaining into new-product-codes)
 
-        (if (seq raw-data)
+        (if (and (seq raw-data)
+                 (not= just-test "1")
+                 )
           (recur (inc n) (into seen new-product-codes))
-          (swap! remaining disj :more-products-coming))))
+          (swap! remaining disj :more-products-coming))
+        ))
 
     (a/pipeline-blocking
      parallelism products-enriched>
